@@ -27,6 +27,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import com.example.cn6008.network.Report;
@@ -72,6 +73,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             intent.putExtra("lng", lastLng);
             startActivity(intent);
         });
+
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_map) {
+                return true;
+            } else if (itemId == R.id.nav_list) {
+                Toast.makeText(this, "List view coming soon!", Toast.LENGTH_SHORT).show();
+                return true;
+            } else if (itemId == R.id.nav_profile) {
+                Toast.makeText(this, "Logging out...", Toast.LENGTH_SHORT).show();
+                SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+                prefs.edit().clear().apply();
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+                return true;
+            }
+            return false;
+        });
     }
 
     @Override
@@ -100,6 +121,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             lastLng = location.getLongitude();
                             LatLng currentLocation = new LatLng(lastLat, lastLng);
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15f));
+                        } else {
+                            Toast.makeText(MainActivity.this, "Παρακαλώ ενεργοποίησε το GPS (ή βάλε mock location στον Emulator)", Toast.LENGTH_LONG).show();
                         }
                     });
         } else {
