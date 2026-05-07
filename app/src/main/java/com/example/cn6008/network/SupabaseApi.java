@@ -2,9 +2,11 @@ package com.example.cn6008.network;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
+import java.util.List;
 
 public interface SupabaseApi {
     @POST("auth/v1/token")
@@ -25,5 +27,12 @@ public interface SupabaseApi {
             @Header("apikey") String apiKey,
             @Header("Authorization") String authToken,
             @Body Report report
+    );
+
+    @GET("rest/v1/reports")
+    Call<List<Report>> getReports(
+            @Header("apikey") String apiKey,
+            @Header("Authorization") String authToken,
+            @Query("select") String select
     );
 }

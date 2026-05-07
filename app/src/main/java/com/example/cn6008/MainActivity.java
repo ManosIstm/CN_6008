@@ -4,8 +4,11 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Toast;
+
+import java.util.List;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -25,6 +28,13 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import com.example.cn6008.network.Report;
+import com.example.cn6008.network.SupabaseClient;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -65,9 +75,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (mMap != null) {
+            fetchAndDisplayReports();
+        }
+    }
+
+    @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
         enableMyLocation();
+        fetchAndDisplayReports();
     }
 
     private void enableMyLocation() {
@@ -100,5 +119,35 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private void fetchAndDisplayReports() {
+        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        String token = prefs.getString("access_token", "");
+        String authToken = "Bearer " + token;
+
+        SupabaseClient.getApi().getReports(BuildConfig.SUPABASE_KEY, authToken, "*").enqueue(new Callback<List<Report>>() {
+            @Override
+            public void onResponse(Call<List<Report>> call, Response<List<Report>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    mMap.clear(); // Clear old markers
+                    for (Report report : response.body()) {
+                        LatLng pos = new LatLng(report.getLatitude(), report.getLongitude());
+                        MarkerOptions marker = new MarkerOptions()
+                                .position(pos)
+                                .title(report.getTitle())
+                                .snippet(report.getCategory() + ": " + report.getDescription());
+                        mMap.addMarker(marker);
+                    }
+                } else {
+                    Toast.makeText(MainActivity.this, "Failed to load reports", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Report>> call, Throwable t) {
+                Toast.makeText(MainActivity.this, "Network Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
