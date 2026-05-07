@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">CN6008</string>
+    <string name="app_name">SmartCity</string>
     <string name="maps_api_key">YOUR_MAPS_API_KEY_HERE</string>
 </resources>
