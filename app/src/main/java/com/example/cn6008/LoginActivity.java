@@ -12,7 +12,14 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.cn6008.network.LoginRequest;
+import com.example.cn6008.network.LoginResponse;
+import com.example.cn6008.network.SupabaseClient;
 import com.google.android.material.textfield.TextInputEditText;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -45,18 +52,42 @@ public class LoginActivity extends AppCompatActivity {
             if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(LoginActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
             } else {
-                // TODO: Add Supabase login logic here
-                Toast.makeText(LoginActivity.this, "Login successful! Proceeding to Map...", Toast.LENGTH_SHORT).show();
-                
-                // For now, jump straight to MainActivity
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish(); // Close LoginActivity so user can't press back to return to it
+                performLogin(email, password);
             }
         });
 
         tvRegister.setOnClickListener(v -> {
             Toast.makeText(LoginActivity.this, "Register clicked (to be implemented)", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void performLogin(String email, String password) {
+        btnLogin.setEnabled(false);
+        btnLogin.setText("Logging in...");
+
+        LoginRequest request = new LoginRequest(email, password);
+        SupabaseClient.getApi().login("password", BuildConfig.SUPABASE_KEY, request).enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                btnLogin.setEnabled(true);
+                btnLogin.setText("LOGIN");
+
+                if (response.isSuccessful() && response.body() != null) {
+                    Toast.makeText(LoginActivity.this, "Welcome " + response.body().getUser().getEmail(), Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Toast.makeText(LoginActivity.this, "Login failed: Invalid credentials", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+                btnLogin.setEnabled(true);
+                btnLogin.setText("LOGIN");
+                Toast.makeText(LoginActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
         });
     }
 }
