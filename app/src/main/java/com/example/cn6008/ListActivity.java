@@ -13,6 +13,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.example.cn6008.network.Report;
 import com.example.cn6008.network.SupabaseClient;
 
@@ -48,6 +49,28 @@ public class ListActivity extends AppCompatActivity {
             currentLat = getIntent().getDoubleExtra("lat", 0.0);
             currentLng = getIntent().getDoubleExtra("lng", 0.0);
         }
+
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav.setSelectedItemId(R.id.nav_list);
+        bottomNav.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_map) {
+                Intent intent = new Intent(ListActivity.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(0,0);
+                return true;
+            } else if (itemId == R.id.nav_list) {
+                return true;
+            } else if (itemId == R.id.nav_profile) {
+                Intent intent = new Intent(ListActivity.this, ProfileActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(0,0);
+                return true;
+            }
+            return false;
+        });
 
         fetchNearbyReports();
     }

@@ -83,11 +83,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Intent intent = new Intent(MainActivity.this, ListActivity.class);
                 intent.putExtra("lat", lastLat);
                 intent.putExtra("lng", lastLng);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
+                overridePendingTransition(0,0);
                 return true;
             } else if (itemId == R.id.nav_profile) {
                 Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
+                overridePendingTransition(0,0);
                 return true;
             }
             return false;
@@ -97,6 +101,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onResume() {
         super.onResume();
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav.setSelectedItemId(R.id.nav_map);
         if (mMap != null) {
             fetchAndDisplayReports();
         }
