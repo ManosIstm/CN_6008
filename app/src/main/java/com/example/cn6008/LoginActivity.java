@@ -1,6 +1,7 @@
 package com.example.cn6008;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
@@ -74,6 +75,9 @@ public class LoginActivity extends AppCompatActivity {
                 btnLogin.setText("LOGIN");
 
                 if (response.isSuccessful() && response.body() != null) {
+                    SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+                    prefs.edit().putString("access_token", response.body().getAccessToken()).apply();
+
                     Toast.makeText(LoginActivity.this, "Welcome " + response.body().getUser().getEmail(), Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);

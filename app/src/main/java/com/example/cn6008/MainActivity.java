@@ -3,6 +3,7 @@ package com.example.cn6008;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -30,6 +31,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap mMap;
     private FusedLocationProviderClient fusedLocationClient;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    
+    private double lastLat = 0.0;
+    private double lastLng = 0.0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +57,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         FloatingActionButton fab = findViewById(R.id.fab_add_report);
         fab.setOnClickListener(v -> {
-            Toast.makeText(this, "Add report clicked", Toast.LENGTH_SHORT).show();
-            // TODO: Navigate to Add Report Activity
+            Intent intent = new Intent(MainActivity.this, AddReportActivity.class);
+            intent.putExtra("lat", lastLat);
+            intent.putExtra("lng", lastLng);
+            startActivity(intent);
         });
     }
 
@@ -71,7 +77,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             fusedLocationClient.getLastLocation()
                     .addOnSuccessListener(this, location -> {
                         if (location != null) {
-                            LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                            lastLat = location.getLatitude();
+                            lastLng = location.getLongitude();
+                            LatLng currentLocation = new LatLng(lastLat, lastLng);
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15f));
                         }
                     });

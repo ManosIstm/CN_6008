@@ -19,4 +19,11 @@ public interface SupabaseApi {
             @Header("apikey") String apiKey,
             @Body LoginRequest request
     );
+
+    @POST("rest/v1/reports")
+    Call<Void> submitReport(
+            @Header("apikey") String apiKey,
+            @Header("Authorization") String authToken,
+            @Body Report report
+    );
 }
