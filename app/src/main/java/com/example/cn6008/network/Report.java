@@ -6,13 +6,15 @@ public class Report {
     private String category;
     private double latitude;
     private double longitude;
+    private String user_id;
 
-    public Report(String title, String description, String category, double latitude, double longitude) {
+    public Report(String title, String description, String category, double latitude, double longitude, String user_id) {
         this.title = title;
         this.description = description;
         this.category = category;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.user_id = user_id;
     }
 
     public String getTitle() { return title; }
@@ -20,4 +22,5 @@ public class Report {
     public String getCategory() { return category; }
     public double getLatitude() { return latitude; }
     public double getLongitude() { return longitude; }
+    public String getUserId() { return user_id; }
 }

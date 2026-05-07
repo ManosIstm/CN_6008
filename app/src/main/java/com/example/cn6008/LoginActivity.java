@@ -76,7 +76,11 @@ public class LoginActivity extends AppCompatActivity {
 
                 if (response.isSuccessful() && response.body() != null) {
                     SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
-                    prefs.edit().putString("access_token", response.body().getAccessToken()).apply();
+                    prefs.edit()
+                            .putString("access_token", response.body().getAccessToken())
+                            .putString("user_id", response.body().getUser().getId())
+                            .putString("user_email", response.body().getUser().getEmail())
+                            .apply();
 
                     Toast.makeText(LoginActivity.this, "Welcome " + response.body().getUser().getEmail(), Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);

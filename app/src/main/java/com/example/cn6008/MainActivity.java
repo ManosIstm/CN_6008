@@ -83,12 +83,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Toast.makeText(this, "List view coming soon!", Toast.LENGTH_SHORT).show();
                 return true;
             } else if (itemId == R.id.nav_profile) {
-                Toast.makeText(this, "Logging out...", Toast.LENGTH_SHORT).show();
-                SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
-                prefs.edit().clear().apply();
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
                 startActivity(intent);
-                finish();
                 return true;
             }
             return false;

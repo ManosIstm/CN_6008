@@ -35,4 +35,12 @@ public interface SupabaseApi {
             @Header("Authorization") String authToken,
             @Query("select") String select
     );
+
+    @GET("rest/v1/reports")
+    Call<List<Report>> getUserReports(
+            @Header("apikey") String apiKey,
+            @Header("Authorization") String authToken,
+            @Query("user_id") String userIdQuery,
+            @Query("select") String select
+    );
 }

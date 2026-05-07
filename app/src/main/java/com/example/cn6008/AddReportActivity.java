@@ -68,9 +68,10 @@ public class AddReportActivity extends AppCompatActivity {
 
         SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
         String token = prefs.getString("access_token", "");
+        String userId = prefs.getString("user_id", "");
         String authToken = "Bearer " + token;
 
-        Report report = new Report(title, desc, category, lat, lng);
+        Report report = new Report(title, desc, category, lat, lng, userId);
 
         SupabaseClient.getApi().submitReport(BuildConfig.SUPABASE_KEY, authToken, report).enqueue(new Callback<Void>() {
             @Override
