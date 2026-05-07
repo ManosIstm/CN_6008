@@ -7,6 +7,7 @@ public class Report {
     private double latitude;
     private double longitude;
     private String user_id;
+    private transient double distanceToUser;
 
     public Report(String title, String description, String category, double latitude, double longitude, String user_id) {
         this.title = title;
@@ -23,4 +24,7 @@ public class Report {
     public double getLatitude() { return latitude; }
     public double getLongitude() { return longitude; }
     public String getUserId() { return user_id; }
+    
+    public double getDistanceToUser() { return distanceToUser; }
+    public void setDistanceToUser(double distance) { this.distanceToUser = distance; }
 }

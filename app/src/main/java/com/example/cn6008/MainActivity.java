@@ -80,7 +80,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             if (itemId == R.id.nav_map) {
                 return true;
             } else if (itemId == R.id.nav_list) {
-                Toast.makeText(this, "List view coming soon!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, ListActivity.class);
+                intent.putExtra("lat", lastLat);
+                intent.putExtra("lng", lastLng);
+                startActivity(intent);
                 return true;
             } else if (itemId == R.id.nav_profile) {
                 Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
