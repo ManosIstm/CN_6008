@@ -13,4 +13,10 @@ public interface SupabaseApi {
             @Header("apikey") String apiKey,
             @Body LoginRequest request
     );
+
+    @POST("auth/v1/signup")
+    Call<LoginResponse> register(
+            @Header("apikey") String apiKey,
+            @Body LoginRequest request
+    );
 }

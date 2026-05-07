@@ -3,7 +3,6 @@ package com.example.cn6008;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -21,18 +20,17 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class LoginActivity extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity {
 
     private TextInputEditText etEmail;
     private TextInputEditText etPassword;
-    private Button btnLogin;
-    private TextView tvRegister;
+    private Button btnRegister;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_register);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -42,52 +40,46 @@ public class LoginActivity extends AppCompatActivity {
 
         etEmail = findViewById(R.id.et_email);
         etPassword = findViewById(R.id.et_password);
-        btnLogin = findViewById(R.id.btn_login);
-        tvRegister = findViewById(R.id.tv_register);
+        btnRegister = findViewById(R.id.btn_register);
 
-        btnLogin.setOnClickListener(v -> {
+        btnRegister.setOnClickListener(v -> {
             String email = etEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
 
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(LoginActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            } else if (password.length() < 6) {
+                Toast.makeText(RegisterActivity.this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
             } else {
-                performLogin(email, password);
+                performRegistration(email, password);
             }
-        });
-
-        tvRegister.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-            startActivity(intent);
         });
     }
 
-    private void performLogin(String email, String password) {
-        btnLogin.setEnabled(false);
-        btnLogin.setText("Logging in...");
+    private void performRegistration(String email, String password) {
+        btnRegister.setEnabled(false);
+        btnRegister.setText("Creating account...");
 
         LoginRequest request = new LoginRequest(email, password);
-        SupabaseClient.getApi().login("password", BuildConfig.SUPABASE_KEY, request).enqueue(new Callback<LoginResponse>() {
+        SupabaseClient.getApi().register(BuildConfig.SUPABASE_KEY, request).enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                btnLogin.setEnabled(true);
-                btnLogin.setText("LOGIN");
+                btnRegister.setEnabled(true);
+                btnRegister.setText("REGISTER");
 
                 if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(LoginActivity.this, "Welcome " + response.body().getUser().getEmail(), Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
+                    Toast.makeText(RegisterActivity.this, "Account created! You can now log in.", Toast.LENGTH_LONG).show();
+                    finish(); // Go back to Login Activity
                 } else {
-                    Toast.makeText(LoginActivity.this, "Login failed: Invalid credentials", Toast.LENGTH_LONG).show();
+                    Toast.makeText(RegisterActivity.this, "Registration failed", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
-                btnLogin.setEnabled(true);
-                btnLogin.setText("LOGIN");
-                Toast.makeText(LoginActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                btnRegister.setEnabled(true);
+                btnRegister.setText("REGISTER");
+                Toast.makeText(RegisterActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
