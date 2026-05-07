@@ -1,5 +1,7 @@
 package com.example.cn6008;
 
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +36,23 @@ public class NearbyReportAdapter extends RecyclerView.Adapter<NearbyReportAdapte
         holder.tvTitle.setText(report.getTitle());
         holder.tvCategory.setText(report.getCategory());
         holder.tvDesc.setText(report.getDescription());
+        
+        // Color coding for categories
+        int bgColor = Color.parseColor("#757575"); // Default Grey
+        String cat = report.getCategory();
+        if (cat != null) {
+            switch (cat.toLowerCase()) {
+                case "pothole": bgColor = Color.parseColor("#FF9800"); break; // Orange
+                case "streetlight": bgColor = Color.parseColor("#FFC107"); break; // Yellow/Amber
+                case "flooding": bgColor = Color.parseColor("#2196F3"); break; // Blue
+                case "vandalism": bgColor = Color.parseColor("#F44336"); break; // Red
+            }
+        }
+        
+        GradientDrawable gd = new GradientDrawable();
+        gd.setColor(bgColor);
+        gd.setCornerRadius(16f);
+        holder.tvCategory.setBackground(gd);
         
         double dist = report.getDistanceToUser();
         if (dist > 1000) {
